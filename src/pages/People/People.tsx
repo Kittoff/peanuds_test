@@ -3,6 +3,7 @@ import {
   Container,
   FormControl,
   InputLabel,
+  Link,
   MenuItem,
   Pagination,
   Select,
@@ -13,13 +14,15 @@ import {
 import Footer from '../../components/Footer';
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { Link as RouterLink } from 'react-router-dom';
+import { IPeople } from './types';
 
 const URL = 'https://swapi.tech/api/people';
 
 const fetchPeople = async () => {
   const response = await fetch(URL);
   const data = await response.json();
-  return data;
+  return data.results;
 };
 
 const People = () => {
@@ -27,11 +30,11 @@ const People = () => {
   const [entriesPerPageCount, setEntriesPerPageCount] = useState<number>(10);
 
   const {
-    data: people,
+    data: peoples,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['people'],
+    queryKey: ['peoples'],
     queryFn: fetchPeople,
   });
 
@@ -51,11 +54,10 @@ const People = () => {
       console.log('Loading...');
     }
 
-    if (people) {
-      console.log('Result Query : ', people);
-      console.log('People : ', people.results);
+    if (peoples) {
+      console.log('People : ', peoples);
     }
-  }, [error, isLoading, people]);
+  }, [error, isLoading, peoples]);
 
   return (
     <>
@@ -91,9 +93,28 @@ const People = () => {
             </Select>
           </FormControl>
         </Stack>
-        <Stack spacing={2} my={4} useFlexGap>
-          No items
-        </Stack>
+        {peoples && peoples.length === 0 && (
+          <Stack spacing={2} my={4} useFlexGap>
+            No items
+          </Stack>
+        )}
+        {isLoading && (
+          <Stack spacing={2} my={4} useFlexGap>
+            Loading...
+          </Stack>
+        )}
+        {peoples &&
+          !error &&
+          peoples.map((people: IPeople) => (
+            <Stack key={people.uid} spacing={2} my={4} useFlexGap>
+              <Link
+                component={RouterLink}
+                to={`/people?selected=${people.uid}`}
+              >
+                {people.name}
+              </Link>
+            </Stack>
+          ))}
         <Stack direction="row" alignItems="center" py={2}>
           <Stack direction="row" justifyContent="center" flex={1}>
             <Pagination count={10} variant="text" shape="rounded" />
