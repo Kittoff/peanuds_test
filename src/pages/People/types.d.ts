@@ -1,4 +1,9 @@
-export interface IPeople {
+export interface IPeopleListItem {
+  name: string;
+  url: string;
+  uid: string;
+}
+export interface IPeopleDetails {
   uid: number;
   name: string;
   birth_year: string;

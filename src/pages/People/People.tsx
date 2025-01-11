@@ -15,7 +15,7 @@ import Footer from '../../components/Footer';
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link as RouterLink } from 'react-router-dom';
-import { IPeople } from './types';
+import { IPeopleListItem } from './types';
 
 const URL = 'https://swapi.tech/api/people';
 
@@ -110,7 +110,7 @@ const People = () => {
         )}
         {peoples &&
           !error &&
-          peoples.map((people: IPeople) => (
+          peoples.map((people: IPeopleListItem) => (
             <Stack key={people.uid} spacing={2} my={4} useFlexGap>
               <Link
                 component={RouterLink}
