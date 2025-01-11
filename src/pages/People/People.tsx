@@ -40,10 +40,7 @@ const People = () => {
           justifyContent="space-between"
         >
           <Typography variant="h6">Character list</Typography>
-          <FormControl
-            sx={{ m: 1, minWidth: 120 }}
-            size="small"
-          >
+          <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
             <InputLabel id="gender-select-label">Gender</InputLabel>
             <Select
               labelId="gender-select-label"
@@ -62,33 +59,14 @@ const People = () => {
             </Select>
           </FormControl>
         </Stack>
-        <Stack
-          spacing={2}
-          my={4}
-          useFlexGap
-        >
+        <Stack spacing={2} my={4} useFlexGap>
           No items
         </Stack>
-        <Stack
-          direction="row"
-          alignItems="center"
-          py={2}
-        >
-          <Stack
-            direction="row"
-            justifyContent="center"
-            flex={1}
-          >
-            <Pagination
-              count={10}
-              variant="text"
-              shape="rounded"
-            />
+        <Stack direction="row" alignItems="center" py={2}>
+          <Stack direction="row" justifyContent="center" flex={1}>
+            <Pagination count={10} variant="text" shape="rounded" />
           </Stack>
-          <FormControl
-            sx={{ m: 1, minWidth: 120 }}
-            size="small"
-          >
+          <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
             <InputLabel id="entries-select-label">Show Entries</InputLabel>
             <Select
               labelId="entries-select-label"
