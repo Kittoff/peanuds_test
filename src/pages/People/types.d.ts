@@ -4,7 +4,7 @@ export interface IPeopleListItem {
   uid: string;
 }
 export interface IPeopleDetails {
-  uid: number;
+  uid: string;
   name: string;
   birth_year: string;
   eye_color: string;

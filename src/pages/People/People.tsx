@@ -15,9 +15,10 @@ import Footer from '../../components/Footer';
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link as RouterLink } from 'react-router-dom';
-import { IPeopleListItem } from './types';
+import { IPeopleDetails } from './types';
+import DialogBox from '../../elements/DialogBox/DialogBox';
 
-const URL = 'https://swapi.tech/api/people';
+export const URL = 'https://swapi.tech/api/people';
 
 const fetchPeople = async () => {
   const response = await fetch(URL);
@@ -28,6 +29,10 @@ const fetchPeople = async () => {
 const People = () => {
   const [gender, setGender] = useState<string>('');
   const [entriesPerPageCount, setEntriesPerPageCount] = useState<number>(10);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedPerson, setSelectedPerson] = useState<IPeopleDetails | null>(
+    null,
+  );
 
   const {
     data: peoples,
@@ -110,11 +115,15 @@ const People = () => {
         )}
         {peoples &&
           !error &&
-          peoples.map((people: IPeopleListItem) => (
+          peoples.map((people: IPeopleDetails) => (
             <Stack key={people.uid} spacing={2} my={4} useFlexGap>
               <Link
                 component={RouterLink}
                 to={`/people?selected=${people.uid}`}
+                onClick={() => {
+                  setSelectedPerson(people);
+                  setIsOpen(true);
+                }}
               >
                 {people.name}
               </Link>
@@ -142,6 +151,11 @@ const People = () => {
         </Stack>
       </Container>
       <Footer />
+      <DialogBox
+        setIsOpen={setIsOpen}
+        isOpen={isOpen}
+        person={selectedPerson}
+      />
     </>
   );
 };
