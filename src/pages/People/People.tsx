@@ -93,6 +93,11 @@ const People = () => {
             </Select>
           </FormControl>
         </Stack>
+        {error && (
+          <Stack spacing={2} my={4} useFlexGap>
+            {error.message}
+          </Stack>
+        )}
         {peoples && peoples.length === 0 && (
           <Stack spacing={2} my={4} useFlexGap>
             No items
