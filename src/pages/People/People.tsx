@@ -12,22 +12,23 @@ import {
   Typography,
 } from '@mui/material';
 import Footer from '../../components/Footer';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link as RouterLink } from 'react-router-dom';
 import { IPeopleDetails } from './types';
 import DialogBox from '../../elements/DialogBox/DialogBox';
 
-export const URL = 'https://swapi.tech/api/people';
-
-const fetchPeople = async () => {
-  const response = await fetch(URL);
+const fetchPeople = async (page: number, entriesPerPageCount: number) => {
+  const response = await fetch(
+    `https://swapi.tech/api/people?page=${page}&limit=${entriesPerPageCount}`,
+  );
   const data = await response.json();
   return data.results;
 };
 
 const People = () => {
   const [gender, setGender] = useState<string>('');
+  const [page, setPage] = useState<number>(1);
   const [entriesPerPageCount, setEntriesPerPageCount] = useState<number>(10);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState<IPeopleDetails | null>(
@@ -39,8 +40,8 @@ const People = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['peoples'],
-    queryFn: fetchPeople,
+    queryKey: ['peoples', page, entriesPerPageCount],
+    queryFn: () => fetchPeople(page, entriesPerPageCount),
   });
 
   const handleGenderChange = (event: SelectChangeEvent) => {
@@ -49,6 +50,10 @@ const People = () => {
 
   const handleEntriesPerPageChange = (event: SelectChangeEvent) => {
     setEntriesPerPageCount(Number(event.target.value));
+  };
+
+  const handlePageChange = (_: ChangeEvent<unknown>, value: number) => {
+    setPage(value);
   };
 
   useEffect(() => {
@@ -131,7 +136,13 @@ const People = () => {
           ))}
         <Stack direction="row" alignItems="center" py={2}>
           <Stack direction="row" justifyContent="center" flex={1}>
-            <Pagination count={10} variant="text" shape="rounded" />
+            <Pagination
+              page={page}
+              count={10}
+              variant="text"
+              shape="rounded"
+              onChange={handlePageChange}
+            />
           </Stack>
           <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
             <InputLabel id="entries-select-label">Show Entries</InputLabel>
