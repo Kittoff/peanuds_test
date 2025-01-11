@@ -11,11 +11,29 @@ import {
   Typography,
 } from '@mui/material';
 import Footer from '../../components/Footer';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+
+const URL = 'https://swapi.tech/api/people';
+
+const fetchPeople = async () => {
+  const response = await fetch(URL);
+  const data = await response.json();
+  return data;
+};
 
 const People = () => {
   const [gender, setGender] = useState<string>('');
   const [entriesPerPageCount, setEntriesPerPageCount] = useState<number>(10);
+
+  const {
+    data: people,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['people'],
+    queryFn: fetchPeople,
+  });
 
   const handleGenderChange = (event: SelectChangeEvent) => {
     setGender(event.target.value as string);
@@ -24,6 +42,20 @@ const People = () => {
   const handleEntriesPerPageChange = (event: SelectChangeEvent) => {
     setEntriesPerPageCount(Number(event.target.value));
   };
+
+  useEffect(() => {
+    if (error) {
+      console.log('Error : ', error.message);
+    }
+    if (isLoading) {
+      console.log('Loading...');
+    }
+
+    if (people) {
+      console.log('Result Query : ', people);
+      console.log('People : ', people.results);
+    }
+  }, [error, isLoading, people]);
 
   return (
     <>
