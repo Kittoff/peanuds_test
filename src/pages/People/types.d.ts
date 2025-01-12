@@ -1,9 +1,9 @@
-export interface IPeopleListItem {
+export interface PeopleListItem {
   name: string;
   url: string;
   uid: string;
 }
-export interface IPeopleDetails {
+export interface PeopleDetails {
   uid: string;
   name: string;
   birth_year: string;
@@ -22,3 +22,5 @@ export interface IPeopleDetails {
   created: string;
   edited: string;
 }
+
+export type Gender = 'male' | 'female' | 'n/a' | '';

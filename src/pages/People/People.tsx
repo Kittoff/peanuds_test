@@ -12,26 +12,40 @@ import {
   Typography,
 } from '@mui/material';
 import Footer from '../../components/Footer';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link as RouterLink } from 'react-router-dom';
-import { IPeopleDetails } from './types';
+import { Gender, PeopleDetails } from './types';
 import DialogBox from '../../elements/DialogBox/DialogBox';
+
+const fetchPersonDetails = async (url: string) => {
+  const response = await fetch(url);
+  const data = await response.json();
+  return {
+    uid: data.result.uid,
+    name: data.result.properties.name,
+    gender: data.result.properties.gender,
+  };
+};
 
 const fetchPeople = async (page: number, entriesPerPageCount: number) => {
   const response = await fetch(
     `https://swapi.tech/api/people?page=${page}&limit=${entriesPerPageCount}`,
   );
   const data = await response.json();
-  return data.results;
+  const detailedPeople = await Promise.all(
+    data.results.map((person: PeopleDetails) => fetchPersonDetails(person.url)),
+  );
+
+  return detailedPeople;
 };
 
 const People = () => {
-  const [gender, setGender] = useState<string>('');
+  const [gender, setGender] = useState<Gender>('');
   const [page, setPage] = useState<number>(1);
   const [entriesPerPageCount, setEntriesPerPageCount] = useState<number>(10);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedPerson, setSelectedPerson] = useState<IPeopleDetails | null>(
+  const [selectedPerson, setSelectedPerson] = useState<PeopleDetails | null>(
     null,
   );
 
@@ -45,7 +59,7 @@ const People = () => {
   });
 
   const handleGenderChange = (event: SelectChangeEvent) => {
-    setGender(event.target.value as string);
+    setGender(event.target.value as Gender);
   };
 
   const handleEntriesPerPageChange = (event: SelectChangeEvent) => {
@@ -56,18 +70,15 @@ const People = () => {
     setPage(value);
   };
 
-  useEffect(() => {
-    if (error) {
-      console.log('Error : ', error.message);
-    }
-    if (isLoading) {
-      console.log('Loading...');
-    }
+  const filteredPeople = useMemo(() => {
+    if (!peoples) return [];
+    if (!gender) return peoples;
 
-    if (peoples) {
-      console.log('People : ', peoples);
-    }
-  }, [error, isLoading, peoples]);
+    return peoples.filter(
+      (person: PeopleDetails) =>
+        person.gender?.toLowerCase() === gender.toLowerCase(),
+    );
+  }, [peoples, gender]);
 
   return (
     <>
@@ -97,7 +108,7 @@ const People = () => {
               <MenuItem value="">
                 <em>None</em>
               </MenuItem>
-              <MenuItem value="female">Male</MenuItem>
+              <MenuItem value="male">Male</MenuItem>
               <MenuItem value="female">Female</MenuItem>
               <MenuItem value="n/a">N/A</MenuItem>
             </Select>
@@ -108,19 +119,20 @@ const People = () => {
             {error.message}
           </Stack>
         )}
-        {peoples && peoples.length === 0 && (
+        {isLoading ? (
           <Stack spacing={2} my={4} useFlexGap>
-            No items
+            <Typography>Loading...</Typography>
           </Stack>
-        )}
-        {isLoading && (
+        ) : filteredPeople.length === 0 ? (
           <Stack spacing={2} my={4} useFlexGap>
-            Loading...
+            <Typography>
+              {gender
+                ? `No characters found with gender: ${gender}`
+                : 'No characters found'}
+            </Typography>
           </Stack>
-        )}
-        {peoples &&
-          !error &&
-          peoples.map((people: IPeopleDetails) => (
+        ) : (
+          filteredPeople.map((people: PeopleDetails) => (
             <Stack key={people.uid} spacing={2} my={4} useFlexGap>
               <Link
                 component={RouterLink}
@@ -133,7 +145,8 @@ const People = () => {
                 {people.name}
               </Link>
             </Stack>
-          ))}
+          ))
+        )}
         <Stack direction="row" alignItems="center" py={2}>
           <Stack direction="row" justifyContent="center" flex={1}>
             <Pagination

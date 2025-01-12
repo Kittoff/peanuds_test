@@ -7,24 +7,8 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import { Stack } from '@mui/material';
-import { IDialogBox } from './types';
+import { DialogBoxProps, PeopleDetails } from './types';
 import { useQuery } from '@tanstack/react-query';
-
-// Typage pour les détails retournés par l'API
-export interface IPeopleDetails {
-  uid: string;
-  birth_year: string;
-  eye_color: string;
-  created: string;
-  edited: string;
-  home_world: string;
-  skin_color: string;
-  name: string;
-  gender: string;
-  height: string;
-  hair_color: string;
-  mass: string;
-}
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -35,14 +19,14 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const fetchPeopleDetails = async (uid: string): Promise<IPeopleDetails> => {
+const fetchPeopleDetails = async (uid: string): Promise<PeopleDetails> => {
   const response = await fetch(`https://swapi.tech/api/people/${uid}`);
   const data = await response.json();
 
   return data.result.properties;
 };
 
-const DialogBox = ({ isOpen, setIsOpen, person }: IDialogBox) => {
+const DialogBox = ({ isOpen, setIsOpen, person }: DialogBoxProps) => {
   const {
     data: peopleDetails,
     isLoading,
@@ -137,5 +121,3 @@ const DialogBox = ({ isOpen, setIsOpen, person }: IDialogBox) => {
 };
 
 export default DialogBox;
-
-// Typage pour les props de DialogBox

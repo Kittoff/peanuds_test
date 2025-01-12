@@ -4,16 +4,9 @@ import CharactersButton from '../../elements/DiscoverButton';
 import Footer from '../../components/Footer';
 import MoviesButton from '../../elements/MoviesButton';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 
 const Home = () => {
   const navigate = useNavigate();
-
-  const [count] = useState<number>(0);
-
-  useEffect(() => {
-    console.log(count);
-  }, []);
 
   return (
     <>
@@ -25,22 +18,13 @@ const Home = () => {
         sx={{ my: 5, px: 4 }}
       >
         <Stack>
-          <Typography
-            variant="h4"
-            component="h1"
-          >
+          <Typography variant="h4" component="h1">
             Welcome to the StarWars Universe!
           </Typography>
-          <Typography
-            variant="subtitle1"
-            component="h2"
-          >
+          <Typography variant="subtitle1" component="h2">
             Let&#39;s do a deep dive together.
           </Typography>
-          <Typography
-            variant="body1"
-            mt={3}
-          >
+          <Typography variant="body1" mt={3}>
             Discover all the{' '}
             <CharactersButton
               variant="contained"
